@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/libs/next-auth";
+// import { authOptions } from "@/libs/next-auth";
 import { createCheckout } from "@/libs/stripe";
-import connectMongo from "@/libs/mongoose";
+// import connectMongo from "@/libs/mongoose";
 import User from "@/models/User";
 
 // This function is used to create a Stripe Checkout Session (one-time payment or subscription)
@@ -32,28 +32,28 @@ export async function POST(req) {
   }
 
   try {
-    const session = await getServerSession(authOptions);
+    // const session = await getServerSession(authOptions);
 
-    await connectMongo();
+    // await connectMongo();
 
-    const user = await User.findById(session?.user?.id);
+    // const user = await User.findById(session?.user?.id);
 
-    const { priceId, mode, successUrl, cancelUrl } = body;
+    // const { priceId, mode, successUrl, cancelUrl } = body;
 
-    const stripeSessionURL = await createCheckout({
-      priceId,
-      mode,
-      successUrl,
-      cancelUrl,
-      // If user is logged in, it will pass the user ID to the Stripe Session so it can be retrieved in the webhook later
-      clientReferenceId: user?._id?.toString(),
-      // If user is logged in, this will automatically prefill Checkout data like email and/or credit card for faster checkout
-      user,
-      // If you send coupons from the frontend, you can pass it here
-      // couponId: body.couponId,
-    });
+    // const stripeSessionURL = await createCheckout({
+    //   priceId,
+    //   mode,
+    //   successUrl,
+    //   cancelUrl,
+    //   // If user is logged in, it will pass the user ID to the Stripe Session so it can be retrieved in the webhook later
+    //   clientReferenceId: user?._id?.toString(),
+    //   // If user is logged in, this will automatically prefill Checkout data like email and/or credit card for faster checkout
+    //   user,
+    //   // If you send coupons from the frontend, you can pass it here
+    //   // couponId: body.couponId,
+    // });
 
-    return NextResponse.json({ url: stripeSessionURL });
+    return NextResponse.json({ url: 'stripeSessionURL' });
   } catch (e) {
     console.error(e);
     return NextResponse.json({ error: e?.message }, { status: 500 });
