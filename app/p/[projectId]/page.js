@@ -1,13 +1,12 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useSearchParams } from "next/navigation";
 import Header from "@/components/Header";
 import { ChromePicker } from 'react-color';
 import NotificationUI from "@/components/NotificationUI";
 import DeleteProjectDialog from "@/components/DeleteProjectDialog";
 import { useParams } from 'next/navigation';
-import { doc, getDoc, getFirestore, setDoc, deleteDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '@/libs/firebaseConfig';
 import toast from "react-hot-toast";
 
@@ -90,52 +89,53 @@ const ProjectDetails = () => {
     setIsKeyVisible(true); // Make key visible when editing
   };
 
-  async function fetchProject() {
-    if (projectId) {
-      try {
-        const docRef = doc(db, 'projects', projectId);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          const projectData = docSnap.data()
-          setProject(projectData);
-          setPopupPosition(projectData.popupPosition)
-          setActionText(projectData.actionText || 'ordered')
-          setActiveStatus(projectData.status)
-          if (!projectData.stripeRestrictedApiKey) setIsEditing(true)
-          setApiKey(projectData.stripeRestrictedApiKey)
-          setBackgroundColor(projectData.backgroundColor || '#ffffff');
-          setTextColor(projectData.textColor || '#374151');
-          setAccentColor(projectData.accentColor || '#02ad78');
-          setBorderColor(projectData.borderColor || '#E0E0E0');
-          console.log('Project data:', docSnap.data());
-        } else {
-          console.log('No such project!');
-        }
-      } catch (error) {
-        console.error('Error fetching project:', error);
-      }
-      setLoading(false);
-    }
-  }
-  const handleDelete = async () => {
-    try {
-      await deleteDoc(doc(db, "projects", projectId));
-      closeDialog(); // Close the dialog after successful deletion
-      navigate('/home'); // Redirect to the home page
-    } catch (error) {
-      alert("Failed to delete the project: " + error.message);
-    }
-  };
-
-  let didInit = false;
+  
+ 
   useEffect(() => {
-    if (!didInit) {
-      didInit = true;
-      // ✅ Only runs once per app load
-      fetchProject().then(() => { }).catch(() => { })
-      console.log('it hsould onlk run ONCE', projectId)
+    let isActive = true;
+    async function fetchProject() {
+      if (projectId) {
+        try {
+          const docRef = doc(db, 'projects', projectId);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists() && isActive) {
+            const projectData = docSnap.data();
+            setProject(projectData);
+            setPopupPosition(projectData.popupPosition);
+            setActionText(projectData.actionText || 'ordered');
+            setActiveStatus(projectData.status);
+            setIsEditing(!projectData.stripeRestrictedApiKey);
+            setApiKey(projectData.stripeRestrictedApiKey);
+            setBackgroundColor(projectData.backgroundColor || '#ffffff');
+            setTextColor(projectData.textColor || '#374151');
+            setAccentColor(projectData.accentColor || '#02ad78');
+            setBorderColor(projectData.borderColor || '#E0E0E0');
+            console.log('Project data:', projectData);
+          } else {
+            console.log('No such project!');
+          }
+        } catch (error) {
+          if (isActive) {
+            console.error('Error fetching project:', error);
+          }
+        } finally {
+          if (isActive) {
+            setLoading(false);
+          }
+        }
+      }
     }
-  }, []);
+
+    fetchProject().then(() => {
+      console.log('Projects fetch attempt completed');
+    }).catch(error => {
+      console.error('Error after fetching projects:', error);
+    });
+
+    return () => {
+      isActive = false; // Update the flag when the component unmounts
+    };
+  }, [projectId]);
   // Close all pickers if clicked outside
   useEffect(() => {
     const handleClickOutside = (event) => {

@@ -8,7 +8,7 @@ const Hero = () => {
       <div className="mb-4">
         <span className="flex items-center justify-center text-xs text-gray-400 mb-2">
           Powered by
-          <img className="inline-block ml-[1px]" src="/stripe_long.webp" width={50} height={25} alt="Stripe" />
+          <Image className="inline-block ml-[1px]" src="/stripe_long.webp" width={50} height={25} alt="Stripe" />
         </span>
       </div>
       <div className="flex flex-col gap-10 lg:gap-14 items-center justify-center text-center ">

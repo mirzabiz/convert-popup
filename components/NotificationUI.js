@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 const NotificationUI = ({ backgroundColor, accentColor, borderColor, textColor, popupPosition, actionText }) => {
-  const [showPopup, setShowPopup] = useState(true);
-
-  if (!showPopup) return null;
+  
 
   const positionClasses = {
     'bottom-right': 'bottom-4 right-4',

@@ -1,12 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import { db } from "@/libs/firebaseConfig";
 import { collection, addDoc, getDocs, query, setDoc, doc } from "firebase/firestore";
-import { ChromePicker } from 'react-color';
-import NotificationUI from "@/components/NotificationUI";
 import { Dialog } from '@headlessui/react';
 import { Toaster, toast } from "react-hot-toast";
 import Link from "next/link";
@@ -30,7 +27,7 @@ const Home = () => {
     cleanUrl = cleanUrl.replace(/\//g, '_');
     // Encode the string to ensure it is a safe Firestore document ID
     return encodeURIComponent(cleanUrl);
-}
+  }
 
   const handleCreateProject = async () => {
     if (!newProject.url || !newProject.name) {
@@ -70,28 +67,40 @@ const Home = () => {
     setNewProject(prev => ({ ...prev, [name]: value }));
   };
 
-  const fetchProjects = async () => {
-    try {
-      const querySnapshot = await getDocs(query(collection(db, "projects")));
-      const projectsArray = querySnapshot.docs.map(doc => ({
-        id: doc.id, // include the document ID in the state
-        ...doc.data() // spread all fields of the document
-      }));
-      setProjects(projectsArray);
-      console.log('Projects fetched:', projectsArray);
-    } catch (error) {
-      console.error('Error fetching projects:', error);
-    }
-  };
-
-  let didInit = false;
   useEffect(() => {
-    if (!didInit) {
-      didInit = true;
-      // ✅ Only runs once per app load
-      fetchProjects().then(() => { }).catch(() => { })
-      console.log('it hsould onlk run ONCE')
+    let isActive = true; // flag to check if the component is still mounted
+  
+    async function fetchProjects() {
+      try {
+        const querySnapshot = await getDocs(query(collection(db, "projects")));
+        const projectsArray = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        if (isActive) {
+          setProjects(projectsArray);
+          console.log('Projects fetched:', projectsArray);
+        }
+      } catch (error) {
+        if (isActive) {
+          console.error('Error fetching projects:', error);
+        }
+      }
     }
+  
+    fetchProjects().then(() => {
+      if (isActive) {
+        console.log('Projects fetch attempt completed');
+      }
+    }).catch(error => {
+      if (isActive) {
+        console.error('Error after fetching projects:', error);
+      }
+    });
+  
+    return () => {
+      isActive = false; // Ensure the flag is updated when the component unmounts
+    };
   }, []);
 
   // List display in the Home component

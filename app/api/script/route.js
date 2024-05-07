@@ -4,7 +4,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import Stripe from 'stripe';
 import { db } from "../../../libs/firebaseConfig"
-import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 
 import countries from 'i18n-iso-countries';
 countries.registerLocale(require("i18n-iso-countries/langs/en.json"));
