@@ -8,6 +8,7 @@ import { Dialog } from '@headlessui/react';
 import { Toaster, toast } from "react-hot-toast";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
+import { Suspense } from 'react'
 
 const Home = () => {
 
@@ -69,7 +70,7 @@ const Home = () => {
 
   useEffect(() => {
     let isActive = true; // flag to check if the component is still mounted
-  
+
     async function fetchProjects() {
       try {
         const querySnapshot = await getDocs(query(collection(db, "projects")));
@@ -87,7 +88,7 @@ const Home = () => {
         }
       }
     }
-  
+
     fetchProjects().then(() => {
       if (isActive) {
         console.log('Projects fetch attempt completed');
@@ -97,7 +98,7 @@ const Home = () => {
         console.error('Error after fetching projects:', error);
       }
     });
-  
+
     return () => {
       isActive = false; // Ensure the flag is updated when the component unmounts
     };
@@ -105,65 +106,67 @@ const Home = () => {
 
   // List display in the Home component
   return (
-    <section className="">
-      <Header home />
-      <Toaster
-        toastOptions={{
-          duration: 3000,
-        }}
-      />
-      <div className="bg-gray-100 min-h-screen ">
-        <div className="container mx-auto p-4">
+    <Suspense>
+      <section className="">
+        <Header home />
+        <Toaster
+          toastOptions={{
+            duration: 3000,
+          }}
+        />
+        <div className="bg-gray-100 min-h-screen ">
+          <div className="container mx-auto p-4">
 
-          <button onClick={openDialog} className="w-full border-[#02ad78] border-[1px] text-[#02ad78] p-3 rounded hover:bg-[#02ad78] hover:text-white my-6 mb-8">
-            Create a new project
-          </button>
-          <div className="space-y-4">
-            {projects.map(project => (
-              <Link key={project.id} href={`/p/${project.id}`}
-                className="flex justify-between items-center bg-white p-5 shadow rounded cursor-pointer">
-                <div>
-                  <h3 className="font-semibold  text-[18px] ">{project.name}</h3>
-                  <p className="text-gray-500 text-[12px]">{project.url}</p>
-                </div>
-                <span className={`${(project.status == 'Active') ? "bg-green-200 text-green-800" : "bg-red-200 text-red-800"} text-xs font-bold px-2 py-1 rounded-full`}>
-                  {project.status}
-                </span>
-              </Link>
-            ))}
-          </div>
-
-          {isDialogOpen && (
-            <Dialog open={isDialogOpen} onClose={closeDialog} className="fixed inset-0 z-10 overflow-y-auto">
-              <div className="flex items-center justify-center min-h-screen fixed inset-0 bg-black bg-opacity-60">
-                <Dialog.Panel className="max-w-md p-4 bg-white rounded shadow mx-8">
-                  <Dialog.Title className="text-lg font-bold text-center mb-4">New Project</Dialog.Title>
-                  <input
-                    className="mt-2 w-full p-2 border rounded"
-                    placeholder="Project Name"
-                    value={newProject.name}
-                    onChange={handleInputChange}
-                    name="name"
-                  />
-                  <input
-                    className="mt-2 w-full p-2 border rounded"
-                    placeholder="Project URL"
-                    value={newProject.url}
-                    onChange={handleInputChange}
-                    required
-                    name="url"
-                  />
-                  <div className="flex justify-end space-x-2 mt-4">
-                    <button onClick={closeDialog} className="bg-gray-500 text-white px-4 py-2 rounded">Cancel</button>
-                    <button onClick={handleCreateProject} className="bg-[#02ad78] text-white px-4 py-2 rounded">Create</button>
+            <button onClick={openDialog} className="w-full border-[#02ad78] border-[1px] text-[#02ad78] p-3 rounded hover:bg-[#02ad78] hover:text-white my-6 mb-8">
+              Create a new project
+            </button>
+            <div className="space-y-4">
+              {projects.map(project => (
+                <Link key={project.id} href={`/p/${project.id}`}
+                  className="flex justify-between items-center bg-white p-5 shadow rounded cursor-pointer">
+                  <div>
+                    <h3 className="font-semibold  text-[18px] ">{project.name}</h3>
+                    <p className="text-gray-500 text-[12px]">{project.url}</p>
                   </div>
-                </Dialog.Panel>
-              </div>
-            </Dialog>
-          )}
+                  <span className={`${(project.status == 'Active') ? "bg-green-200 text-green-800" : "bg-red-200 text-red-800"} text-xs font-bold px-2 py-1 rounded-full`}>
+                    {project.status}
+                  </span>
+                </Link>
+              ))}
+            </div>
+
+            {isDialogOpen && (
+              <Dialog open={isDialogOpen} onClose={closeDialog} className="fixed inset-0 z-10 overflow-y-auto">
+                <div className="flex items-center justify-center min-h-screen fixed inset-0 bg-black bg-opacity-60">
+                  <Dialog.Panel className="max-w-md p-4 bg-white rounded shadow mx-8">
+                    <Dialog.Title className="text-lg font-bold text-center mb-4">New Project</Dialog.Title>
+                    <input
+                      className="mt-2 w-full p-2 border rounded"
+                      placeholder="Project Name"
+                      value={newProject.name}
+                      onChange={handleInputChange}
+                      name="name"
+                    />
+                    <input
+                      className="mt-2 w-full p-2 border rounded"
+                      placeholder="Project URL"
+                      value={newProject.url}
+                      onChange={handleInputChange}
+                      required
+                      name="url"
+                    />
+                    <div className="flex justify-end space-x-2 mt-4">
+                      <button onClick={closeDialog} className="bg-gray-500 text-white px-4 py-2 rounded">Cancel</button>
+                      <button onClick={handleCreateProject} className="bg-[#02ad78] text-white px-4 py-2 rounded">Create</button>
+                    </div>
+                  </Dialog.Panel>
+                </div>
+              </Dialog>
+            )}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </Suspense>
   );
 
 };
