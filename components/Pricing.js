@@ -7,14 +7,14 @@ import ButtonCheckout from "./ButtonCheckout";
 
 const Pricing = () => {
   return (
-    <section className="bg-base-200 overflow-hidden" id="pricing">
-      <div className="py-24 px-8 max-w-5xl mx-auto">
-        <div className="flex flex-col text-center w-full mb-20">
-          <p className="font-medium text-primary mb-8">Pricing</p>
-          <h2 className="font-bold text-3xl lg:text-5xl tracking-tight">
-            Save hours of repetitive code and ship faster!
-          </h2>
-        </div>
+    <section className="bg-[#f7f8fd]  overflow-hidden" id="pricing">
+    <div className="py-24 px-8 max-w-5xl mx-auto">
+      <div className="flex flex-col text-center w-full mb-20">
+        <p className="font-medium  mb-8 text-[#02ad78]">Pricing</p>
+        <h2 className="font-bold text-3xl text-[#111] lg:text-5xl tracking-tight">
+          Boost your Conversion Rate Today
+        </h2>
+      </div>
 
         <div className="relative flex justify-center flex-col lg:flex-row items-center lg:items-stretch gap-8">
           {config.stripe.plans.map((plan) => (

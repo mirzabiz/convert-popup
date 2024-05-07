@@ -191,15 +191,13 @@ const FeaturesAccordion = () => {
 
   return (
     <section
-      className="py-24 md:py-32 space-y-24 md:space-y-32 max-w-7xl mx-auto bg-base-100 "
+      className="py-24 md:py-32 space-y-24 md:space-y-32 max-w-7xl mx-auto  "
       id="features"
     >
       <div className="px-8">
-        <h2 className="font-extrabold text-4xl lg:text-6xl tracking-tight mb-12 md:mb-24">
-          All you need to ship your startup fast
-          <span className="bg-neutral text-neutral-content px-2 md:px-4 ml-1 md:ml-1.5 leading-relaxed whitespace-nowrap">
-            and get profitable
-          </span>
+        <p className="text-lg text-bold opacity-80 leading-relaxed tracking-tight mb-3 md:mb-6 text-center text-[#02ad78]">How it works</p>
+        <h2 className="font-extrabold text-2xl lg:text-4xl tracking-tight mb-12 md:mb-24 text-center">
+          Increase your Sales with 3 Simple Steps
         </h2>
         <div className=" flex flex-col md:flex-row gap-12 md:gap-24">
           <div className="grid grid-cols-1 items-stretch gap-8 sm:gap-12 lg:grid-cols-2 lg:gap-20">

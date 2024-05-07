@@ -14,20 +14,17 @@ const links = [
     label: "Pricing",
   },
   {
-    href: "/#testimonials",
-    label: "Reviews",
-  },
-  {
     href: "/#faq",
     label: "FAQ",
   },
 ];
 
-const cta = <ButtonSignin extraStyle="btn-primary" />;
+
+const cta = <ButtonSignin extraStyle="bg-[#02ad78] text-white" text="Login" />;
 
 // A header with a logo on the left, links in the center (like Pricing, etc...), and a CTA (like Get Started or Login) on the right.
 // The header is responsive, and on mobile, the links are hidden behind a burger button.
-const Header = () => {
+const Header = ({ home }) => {
   const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -37,7 +34,7 @@ const Header = () => {
   }, [searchParams]);
 
   return (
-    <header className="bg-base-200">
+    <header className="">
       <nav
         className="container flex items-center justify-between px-8 py-4 mx-auto"
         aria-label="Global"
@@ -87,7 +84,7 @@ const Header = () => {
         </div>
 
         {/* Your links on large screens */}
-        <div className="hidden lg:flex lg:justify-center lg:gap-12 lg:items-center">
+        {!home && <div className="hidden lg:flex lg:justify-center lg:gap-12 lg:items-center">
           {links.map((link) => (
             <Link
               href={link.href}
@@ -98,10 +95,14 @@ const Header = () => {
               {link.label}
             </Link>
           ))}
-        </div>
+        </div>}
 
         {/* CTA on large screens */}
-        <div className="hidden lg:flex lg:justify-end lg:flex-1">{cta}</div>
+        {!home ? <div className="hidden lg:flex lg:justify-end lg:flex-1">{cta}</div>
+          : <>
+            <Link href="/home" className="hidden lg:flex lg:justify-end lg:mr-8 cursor-pointer hover:underline">Projects</Link>
+            <div className="hidden lg:flex lg:justify-end lg:mr-8 cursor-pointer hover:underline">Settings</div>
+          </>}
       </nav>
 
       {/* Mobile menu, show/hide based on menu state. */}
@@ -151,7 +152,7 @@ const Header = () => {
           </div>
 
           {/* Your links on small screens */}
-          <div className="flow-root mt-6">
+          {!home ? <div className="flow-root mt-6">
             <div className="py-4">
               <div className="flex flex-col gap-y-4 items-start">
                 {links.map((link) => (
@@ -169,7 +170,15 @@ const Header = () => {
             <div className="divider"></div>
             {/* Your CTA on small screens */}
             <div className="flex flex-col">{cta}</div>
-          </div>
+          </div> : <div className="flow-root mt-6">
+            <div className="py-4">
+              <Link href={"/home"} className="flex flex-col gap-y-4 items-start cursor-pointer hover:underline">Projects</Link>
+              <div className="flex flex-col gap-y-4 mt-4 items-start cursor-pointer hover:underline">Settings</div>
+            </div>
+            <div className="divider"></div>
+          </div>}
+
+
         </div>
       </div>
     </header>

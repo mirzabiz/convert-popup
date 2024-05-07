@@ -4,6 +4,7 @@ import { getSEOTags } from "@/libs/seo";
 import ClientLayout from "@/components/LayoutClient";
 import config from "@/config";
 import "./globals.css";
+import Script from "next/script";
 
 const font = Inter({ subsets: ["latin"] });
 
@@ -23,7 +24,9 @@ export default function RootLayout({ children }) {
     <html lang="en" data-theme={config.colors.theme} className={font.className}>
       {config.domainName && (
         <head>
+          {/* <script src="http://localhost:3000/api/script?projectId=7oK1K9Uf4y91pp7HzFxK" strategy="afterInteractive" defer /> */}
           <PlausibleProvider domain={config.domainName} />
+          {/* <script src="http://localhost:3000/api/script" strategy="afterInteractive" defer /> */}
         </head>
       )}
       <body>
