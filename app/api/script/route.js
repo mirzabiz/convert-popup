@@ -90,7 +90,9 @@ export async function GET(req) {
       'Content-Type': 'application/javascript'
     };
 
-    if (!updatedAt || timeDifference > 20) {
+    if (timeDiff < 20) {
+      headers['Cache-Control'] = 'public, max-age=0, must-revalidate';
+    } else {
       headers['Cache-Control'] = 'public, s-maxage=3600, stale-while-revalidate=59';
     }
 
