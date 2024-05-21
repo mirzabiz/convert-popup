@@ -28,7 +28,7 @@ const ButtonCheckout = ({ priceId, mode = "subscription", user, hasAccess }) => 
           const res = await apiClient.post("/stripe/create-checkout", {
             priceId,
             mode,
-            couponId: 'EWX0vwDF',
+            couponId: process.env.NODE_ENV === "development" ? 'EWX0vwDF' : 'qYLM2upq',
             uid: user.uid,
             successUrl: window.location.href,
             cancelUrl: window.location.href,
