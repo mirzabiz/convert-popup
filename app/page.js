@@ -8,14 +8,12 @@ import FAQ from "@/components/FAQ";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
 import { auth, db } from '@/libs/firebaseConfig';
-import { useRouter, usePathname } from 'next/navigation';
 import { getRedirectResult } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import Script from 'next/script';
 
 export default function Home() {
-  const router = useRouter();
-  const pathname = usePathname();
+
 
   const [user, setUser] = useState(null);
   const [hasAccess, setHasAccess] = useState(false);

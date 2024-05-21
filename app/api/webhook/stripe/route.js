@@ -168,14 +168,14 @@ export async function POST(req) {
         break;
       }
 
-      case "invoice.payment_failed":
+      case "invoice.payment_failed": {
         // A payment failed (for instance the customer does not have a valid payment method)
         // ❌ Revoke access to the product
         // ⏳ OR wait for the customer to pay (more friendly):
         //      - Stripe will automatically email the customer (Smart Retries)
         //      - We will receive a "customer.subscription.deleted" when all retries were made and the subscription has expired
 
-        const clientReferenceId = data.object.client_reference_id || data.object.metadata.uid;
+        const clientReferenceId =  data.object.metadata.uid;
 
         const userRef = dbAdmin.collection('users').doc(clientReferenceId);
         const docSnapshot = await userRef.get();
@@ -191,7 +191,7 @@ export async function POST(req) {
             console.log("No record found for customer ID:", clientReferenceId);
         }
         break;
-
+      }
       default:
       // Unhandled event type
     }
@@ -229,7 +229,7 @@ async function updateUserInFirestore(uid, email, session, customerId) {
     };
     await userDoc.set(userData, { merge: true });
     console.log("Firestore updated for user:", uid);
-};
+}
 
 async function updateAccessOnInvoicePaid(uid, priceId, planName, amount, customerId) {
     const usersRef = dbAdmin.collection('users');

@@ -5,12 +5,10 @@ import Image from 'next/image';
 import logo from '@/app/icon.png';
 import config from '../config';
 import { auth } from "@/libs/firebaseConfig";
-import { useRouter } from 'next/navigation';
 
-import { signInWithRedirect, GoogleAuthProvider,getRedirectResult } from "firebase/auth";
+import { signInWithRedirect, GoogleAuthProvider } from "firebase/auth";
 
 const LoginDialog = ({ isOpen, onClose }) => {
-    const router = useRouter();
 
     const handleLogin = async () => {
         try {

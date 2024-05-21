@@ -7,20 +7,18 @@ import { collection, addDoc, getDocs, query, setDoc, doc, where, getDoc } from "
 import { Dialog } from '@headlessui/react';
 import { Toaster, toast } from "react-hot-toast";
 import Link from "next/link";
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Suspense } from 'react'
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Pricing from "@/components/Pricing";
 import BetterIcon from "@/components/BetterIcon";
 import { ClipLoader } from "react-spinners";
-import Head from "next/head";
 import apiClient from "@/libs/api";
 
 
 const Home = () => {
 
   const router = useRouter();
-  const pathname = usePathname()
 
   const [projects, setProjects] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -170,15 +168,9 @@ const Home = () => {
 
     // Clean up the subscription on unmount
     return () => unsubscribe();
-  }, []);
+  }, [router]);
 
-  useEffect(() => {
-    const scriptId = "popup-script";
-    const script = document.getElementById(scriptId);
-    if (script) {
-      script.remove();
-    }
-  }, [pathname]);
+
 
   if (loading) {
     return <div className="flex justify-center items-center min-h-screen">

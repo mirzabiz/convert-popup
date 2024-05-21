@@ -22,7 +22,7 @@ function getCountryNameOrCode(countryCode) {
     return aliasName; 
   }
   return countryCode;
-};
+}
 
 export async function GET(req) {
   const projectId = req.nextUrl.searchParams.get('projectId');

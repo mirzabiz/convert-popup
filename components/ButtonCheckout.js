@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import apiClient from "@/libs/api";
 import config from "@/config";
 import LoginDialog from "./LoginDialog";

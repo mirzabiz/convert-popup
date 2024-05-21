@@ -1,17 +1,10 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import Header from "@/components/Header";
-import { ChromePicker } from 'react-color';
-import NotificationUI from "@/components/NotificationUI";
-import DeleteProjectDialog from "@/components/DeleteProjectDialog";
+import { useState, useEffect } from "react";
 import { useParams } from 'next/navigation';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc,  } from 'firebase/firestore';
 import { db } from '@/libs/firebaseConfig';
-import toast from "react-hot-toast";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from 'next/navigation';
-import Stripe from "stripe";
 import { ClipLoader } from "react-spinners";
 
 const ValidWebsite = () => {
@@ -39,7 +32,7 @@ const ValidWebsite = () => {
     };
 
     checkWebsiteExists();
-  }, []);
+  }, [params.url]);
 
   if (isLoading) {
     return <div className="flex justify-center items-center min-h-screen">

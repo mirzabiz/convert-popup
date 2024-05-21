@@ -62,7 +62,7 @@ const Footer = () => {
                 </a> */}
               </div>
             </div>
-            <div className="lg:w-1/3 md:w-1/2 w-full px-4">
+            {/* <div className="lg:w-1/3 md:w-1/2 w-full px-4">
               <div className="footer-title font-semibold text-base-content tracking-widest text-sm md:text-left mb-3">
                 Support
               </div>
@@ -70,8 +70,8 @@ const Footer = () => {
               <div className="flex flex-col justify-center items-center md:items-start gap-2 mb-10 text-sm">
                 mirzabiz2000@gmail.com
               </div>
-            </div>
-            {/* <div className="lg:w-1/3 md:w-1/2 w-full px-4">
+            </div> */}
+            <div className="lg:w-1/3 md:w-1/2 w-full px-4">
               <div className="footer-title font-semibold text-base-content tracking-widest text-sm md:text-left mb-3">
                 LEGAL
               </div>
@@ -84,7 +84,7 @@ const Footer = () => {
                   Privacy policy
                 </Link>
               </div>
-            </div> */}
+            </div>
           </div>
         </div>
       </div>

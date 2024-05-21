@@ -3,7 +3,6 @@ import PlausibleProvider from "next-plausible";
 import { getSEOTags } from "@/libs/seo";
 import config from "@/config";
 import "./globals.css";
-import Script from "next/script";
 
 const font = Inter({ subsets: ["latin"] });
 

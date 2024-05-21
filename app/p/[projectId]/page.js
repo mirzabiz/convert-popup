@@ -101,44 +101,45 @@ const ProjectDetails = () => {
     setIsKeyVisible(true); // Make key visible when editing
   };
 
-  async function fetchProjects(user, projectId) {
-    if (projectId) {
-      setLoading(true);
-      try {
-        const docRef = doc(db, 'projects', projectId);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          const projectData = docSnap.data();
-          if (projectData.uid === user.uid) {
-            setProject(projectData);
-            setPopupPosition(projectData.popupPosition);
-            setActionText(projectData.actionText || 'ordered');
-            setActiveStatus(projectData.status);
-            setIsEditing(!projectData.stripeRestrictedApiKey);
-            setApiKey(projectData.stripeRestrictedApiKey);
-            setBackgroundColor(projectData.backgroundColor || '#ffffff');
-            setTextColor(projectData.textColor || '#374151');
-            setAccentColor(projectData.accentColor || '#02ad78');
-            setBorderColor(projectData.borderColor || '#E0E0E0');
-          } else {
-            console.log('Project does not belong to user');
-            toast.error('You do not have permission to view this project');
-            router.push('/')
-          }
-          // console.log('Project data:', projectData);
-        } else {
-          console.log('No such project!');
-        }
-      } catch (error) {
-        console.error('Error fetching project:', error);
-
-      } finally {
-        setLoading(false);
-      }
-    }
-  }
+ 
 
   useEffect(() => {
+    const fetchProjects = async (user, projectId) => {
+      if (projectId) {
+        setLoading(true);
+        try {
+          const docRef = doc(db, 'projects', projectId);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            const projectData = docSnap.data();
+            if (projectData.uid === user.uid) {
+              setProject(projectData);
+              setPopupPosition(projectData.popupPosition);
+              setActionText(projectData.actionText || 'ordered');
+              setActiveStatus(projectData.status);
+              setIsEditing(!projectData.stripeRestrictedApiKey);
+              setApiKey(projectData.stripeRestrictedApiKey);
+              setBackgroundColor(projectData.backgroundColor || '#ffffff');
+              setTextColor(projectData.textColor || '#374151');
+              setAccentColor(projectData.accentColor || '#02ad78');
+              setBorderColor(projectData.borderColor || '#E0E0E0');
+            } else {
+              console.log('Project does not belong to user');
+              toast.error('You do not have permission to view this project');
+              router.push('/')
+            }
+            // console.log('Project data:', projectData);
+          } else {
+            console.log('No such project!');
+          }
+        } catch (error) {
+          console.error('Error fetching project:', error);
+  
+        } finally {
+          setLoading(false);
+        }
+      }
+    }
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -152,7 +153,7 @@ const ProjectDetails = () => {
       }
     });
     return () => unsubscribe();
-  }, [projectId]);
+  }, [projectId, router]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
