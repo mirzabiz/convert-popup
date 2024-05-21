@@ -1,4 +1,5 @@
 import config from "@/config";
+import ogImage from '../app/opengraph-image.png'
 
 // These are all the SEO tags you can add to your pages.
 // It prefills data with default title/description/OG, etc.. and you can cusotmize it for each page.
@@ -41,6 +42,24 @@ export const getSEOTags = ({
       //     height: 660,
       //   },
       // ],
+      openGraph: {
+        images: [
+          {
+            url: ogImage.src,
+            width: ogImage.width,
+            height: ogImage.height
+          },
+        ],
+      },
+      twitter: {
+        images: [
+          {
+            url: ogImage.src,
+            width: ogImage.width,
+            height: ogImage.height
+          },
+        ]
+      },
       locale: "en_US",
       type: "website",
     },
