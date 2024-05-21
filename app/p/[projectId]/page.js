@@ -44,6 +44,11 @@ const ProjectDetails = () => {
   const accentRef = useRef(null);
   const borderRef = useRef(null);
 
+  const scriptUrl =
+    process.env.NODE_ENV === 'development'
+      ? `http://localhost:3000/api/script?projectId=${projectId}`
+      : `https://convertpopup.co/api/script?projectId=${projectId}`;
+
   const handleCopy = async () => {
     const baseUrl = process.env.NODE_ENV === 'production' ? 'https://convertpopup.co' : 'http://localhost:3000';
     const scriptText = `<script src="${baseUrl}/api/script?projectId=${projectId}"></script>`;
@@ -257,7 +262,7 @@ const ProjectDetails = () => {
               <div className={apiKey ? "" : "blur-sm"}>
                 <div className="md:flex items-center justify-center mb-2">
                   <div className="bg-gray-200 rounded p-2 flex-grow md:mb-0 mb-2 md:max-w-[600px] lg:max-w-[660px]">
-                    <code className="text-sm block overflow-x-auto text-nowrap">&lt;script src="http://localhost:3000/api/script?projectId={projectId}"&gt;&lt;/script&gt;</code>
+                    <code className="text-sm block overflow-x-auto text-nowrap">&lt;script src="{scriptUrl}"&gt;&lt;/script&gt;</code>
                   </div>
                   <button onClick={apiKey ? handleCopy : null} className="text-white md:ml-2 md:mt-0 mt-2 text-sm bg-[#02ad78] hover:bg-green-500 font-bold py-2 px-4 rounded md:w-auto ">
                     Copy
@@ -285,7 +290,7 @@ const ProjectDetails = () => {
                 />
               </div>
               <p className="text-gray-600 text-sm mb-6">
-                Create a <a href="https://dashboard.stripe.com/apikeys/create?name=ConvertPopup&permissions%5B%5D=rak_charge_read&permissions%5B%5D=rak_balance_read" target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-800">Stripe restricted API key</a>. ⚠️ DO NOT change any permissions.
+                Create a <a href="https://dashboard.stripe.com/apikeys/create?name=ConvertPopup&permissions%5B%5D=rak_charge_read&permissions%5B%5D=rak_balance_read" target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-800 underline">Stripe restricted API key</a>. ⚠️ DO NOT change any permissions.
               </p>
               <div className="flex items-center space-x-4">
                 {isEditing ? (
