@@ -57,13 +57,7 @@ export const getSEOTags = ({
       description: openGraph?.description || config.appDescription,
       // If you add an twitter-image.(jpg|jpeg|png|gif) image to the /app folder, you don't need the code below
       // images: [openGraph?.image || defaults.og.image],
-      images: [
-        {
-          url: 'https://diw3djro0uevn.cloudfront.net/convert-popup/opengraph-image.png',
-          width: 1200,
-          height: 660
-        },
-      ],
+      image: 'https://diw3djro0uevn.cloudfront.net/convert-popup/opengraph-image.png',
       card: "summary_large_image",
       creator: "@mirzabiz",
     },
