@@ -82,13 +82,19 @@ export async function GET(req) {
         semicolons: false, 
       },
     });
+    const currentTime = new Date();
+    const updatedAt = configDic.updatedAt ? new Date(configDic.updatedAt.toMillis()) : null;
+    const timeDifference = updatedAt ? (currentTime - updatedAt) / (1000 * 60) : null; // Time difference in minutes
 
-    const response = new NextResponse(minifiedResult.code, {
-      headers: {
-        'Content-Type': 'application/javascript',
-        // 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=59'
-      }
-    });
+    const headers = {
+      'Content-Type': 'application/javascript'
+    };
+
+    if (!updatedAt || timeDifference > 20) {
+      headers['Cache-Control'] = 'public, s-maxage=3600, stale-while-revalidate=59';
+    }
+
+    const response = new NextResponse(minifiedResult.code, { headers });
 
     return response;
   } catch (error) {

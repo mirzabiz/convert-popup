@@ -102,6 +102,7 @@ const Home = () => {
         popupPosition: 'bottom-left',
         status: 'Incomplete',
         actionText: 'ordered',
+        updatedAt: new Date(),
         createdAt: new Date()  // Store the creation date
       });
       await setDoc(doc(db, "websites", url), {

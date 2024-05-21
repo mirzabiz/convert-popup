@@ -73,7 +73,7 @@ export default function Home() {
         <Header user={user} landing />
       </Suspense>
       <main>
-        <Script src='https://convertpopup.co/api/script?projectId=Td38jHghYTDRmUOjNfdi' async defer/>
+        <Script src='https://convertpopup.co/api/script?projectId=iAYvpYExAYrNDMdrQVcc' async defer/>
         <Hero />
         {/* <Problem /> */}
         <FeaturesAccordion />

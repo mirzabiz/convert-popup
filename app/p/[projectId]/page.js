@@ -85,7 +85,8 @@ const ProjectDetails = () => {
       const projectRef = doc(db, 'projects', projectId);
       await setDoc(projectRef, {
         stripeRestrictedApiKey: apiKey,
-        status: 'Active'
+        status: 'Active',
+        updatedAt: new Date()
       }, { merge: true });
       setActiveStatus('Active');
       setIsEditing(false);
@@ -189,7 +190,8 @@ const ProjectDetails = () => {
       backgroundColor,
       textColor,
       accentColor,
-      borderColor
+      borderColor,
+      updatedAt: new Date()
     };
 
     try {
@@ -205,7 +207,8 @@ const ProjectDetails = () => {
 
     const preferences = {
       popupPosition,
-      actionText
+      actionText,
+      updatedAt: new Date()
     };
 
     try {
