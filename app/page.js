@@ -67,14 +67,14 @@ export default function Home() {
   return (
     <>
       <Suspense>
-        <div className='bg-[#02ad78] text-white text-center py-2 text-xs font-bold'>
+        {/* <div className='bg-[#02ad78] text-white text-center py-2 text-xs font-bold'>
           Limited Discount: 65% off for the next 49 orders
-        </div>
+        </div> */}
         <Header user={user} landing />
       </Suspense>
       <main>
-        <Script src='https://convertpopup.co/api/script?projectId=iAYvpYExAYrNDMdrQVcc' async defer/>
-        <Hero />
+      <Script src='https://convertpopup.co/api/script?projectId=iAYvpYExAYrNDMdrQVcc' async defer/>
+      <Hero />
         {/* <Problem /> */}
         <FeaturesAccordion />
         <Pricing user={user} hasAccess={hasAccess}/>

@@ -3,7 +3,7 @@ import config from "@/config";
 const CTA = () => {
   return (
     <section className="relative hero overflow-hidden pb-32 pt-32">
-      <div className="relative hero-content text-center text-neutral-content md:py-16 bg-[#02ad78] md:px-[150px] px-8 mx-4 rounded-3xl">
+      <div className="relative hero-content text-center text-neutral-content md:py-16 bg-[#02ad78] md:px-[150px] rounded-3xl mx-4">
         <div className="flex flex-col items-center max-w-2xl p-8 md:p-0">
           <h2 className="font-bold text-3xl md:text-5xl tracking-tight mb-4 md:mb-6">
             Increase your conversion rate instantly
