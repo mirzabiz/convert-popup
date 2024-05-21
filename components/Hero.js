@@ -4,7 +4,7 @@ import Link from "next/link";
 
 const Hero = () => {
   return (
-    <main className="text-center pb-[180px] pt-[150px] bg-[#e9f5f0]">
+    <main className="text-center pb-[135px] pt-[150px] bg-[#e9f5f0]">
       <div className="mb-4 ">
         <span className="flex items-center justify-center text-xs text-gray-400 mb-2">
           Powered by
@@ -32,6 +32,13 @@ const Hero = () => {
         </Link>
         {/* <TestimonialsAvatars priority /> */}
       </div>
+
+      <div className="flex text-sm items-center text-gray-500 justify-center pt-[24px]">
+          <i className="fas fa-gift text-green-500 mr-2"></i>
+          <span className="text-green-500 font-bold">$50 off</span>
+          <span className="ml-1">for the first 49 customers</span>
+          {/* <span className="ml-1">(10 left)</span> */}
+        </div>
     </main>
   );
 };
