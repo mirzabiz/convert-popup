@@ -90,12 +90,12 @@ export async function GET(req) {
       'Content-Type': 'application/javascript'
     };
 
-    if (timeDifference < 20) {
-      headers['Cache-Control'] = 'public, max-age=0, must-revalidate';
-      headers['Pragma'] = 'no-cache'
-    } else {
-      headers['Cache-Control'] = 'public, s-maxage=3600, stale-while-revalidate=59';
-    }
+    // if (timeDifference < 20) {
+    //   headers['Cache-Control'] = 'public, max-age=0, must-revalidate';
+    //   headers['Pragma'] = 'no-cache'
+    // } else {
+    //   headers['Cache-Control'] = 'public, s-maxage=3600, stale-while-revalidate=59';
+    // }
 
     const response = new NextResponse(minifiedResult.code, { headers });
 
