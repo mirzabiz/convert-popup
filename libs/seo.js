@@ -22,11 +22,11 @@ export const getSEOTags = ({
     keywords: keywords || [config.appName],
     applicationName: config.appName,
     // set a base URL prefix for other fields that require a fully qualified URL (.e.g og:image: og:image: 'https://yourdomain.com/share.png' => '/share.png')
-    metadataBase: new URL(
-      process.env.NODE_ENV === "development"
-        ? "http://localhost:3000/"
-        : new URL(`https://${config.domainName}/`)
-    ),
+    // metadataBase: new URL(
+    //   process.env.NODE_ENV === "development"
+    //     ? "http://localhost:3000/"
+    //     : new URL(`https://${config.domainName}/`)
+    // ),
 
     openGraph: {
       title: openGraph?.title || config.appName,
