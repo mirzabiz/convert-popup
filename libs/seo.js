@@ -43,7 +43,7 @@ export const getSEOTags = ({
       // ],
         images: [
           {
-            url: 'https://diw3djro0uevn.cloudfront.net/convert-popup/',
+            url: 'https://diw3djro0uevn.cloudfront.net/convert-popup/opengraph-image.png',
             width: 1200,
             height: 660
           },
@@ -59,7 +59,7 @@ export const getSEOTags = ({
       // images: [openGraph?.image || defaults.og.image],
       images: [
         {
-          url: 'https://diw3djro0uevn.cloudfront.net/convert-popup/',
+          url: 'https://diw3djro0uevn.cloudfront.net/convert-popup/opengraph-image.png',
           width: 1200,
           height: 660
         },
