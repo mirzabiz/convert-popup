@@ -13,7 +13,7 @@ const Hero = () => {
       </div>
       <div className="flex flex-col gap-10 lg:gap-14 items-center justify-center text-center">
 
-        <h1 className="font-extrabold text-[26px] md:text-5xl lg:text-6xl tracking-tight md:-mb-4 max-w-[830px]">
+        <h1 className="font-extrabold text-4xl md:text-5xl lg:text-6xl tracking-tight md:-mb-4 max-w-[830px]">
           Give your visitors a reason to buy today,
           <span className="bg-[#02ad78] text-neutral-content px-2 md:px-4 ml-1 md:ml-1.5 leading-relaxed whitespace-nowrap">
             not tomorrow
