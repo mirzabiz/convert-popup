@@ -26,7 +26,7 @@ export const getSEOTags = ({
     metadataBase: new URL(
       process.env.NODE_ENV === "development"
         ? "http://localhost:3000/"
-        : `https://${config.domainName}/`
+        : new URL(`https://${config.domainName}/`)
     ),
 
     openGraph: {
