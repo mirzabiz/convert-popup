@@ -42,7 +42,6 @@ export const getSEOTags = ({
       //     height: 660,
       //   },
       // ],
-      openGraph: {
         images: [
           {
             url: ogImage.src,
@@ -50,16 +49,6 @@ export const getSEOTags = ({
             height: ogImage.height
           },
         ],
-      },
-      twitter: {
-        images: [
-          {
-            url: ogImage.src,
-            width: ogImage.width,
-            height: ogImage.height
-          },
-        ]
-      },
       locale: "en_US",
       type: "website",
     },
@@ -69,6 +58,13 @@ export const getSEOTags = ({
       description: openGraph?.description || config.appDescription,
       // If you add an twitter-image.(jpg|jpeg|png|gif) image to the /app folder, you don't need the code below
       // images: [openGraph?.image || defaults.og.image],
+      images: [
+        {
+          url: ogImage.src,
+          width: ogImage.width,
+          height: ogImage.height
+        },
+      ],
       card: "summary_large_image",
       creator: "@mirzabiz",
     },
