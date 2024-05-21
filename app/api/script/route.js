@@ -92,6 +92,7 @@ export async function GET(req) {
 
     if (timeDifference < 20) {
       headers['Cache-Control'] = 'public, max-age=0, must-revalidate';
+      headers['Pragma'] = 'no-cache'
     } else {
       headers['Cache-Control'] = 'public, s-maxage=3600, stale-while-revalidate=59';
     }
