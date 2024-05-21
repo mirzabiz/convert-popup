@@ -2,28 +2,6 @@ import Link from "next/link";
 import { getSEOTags } from "@/libs/seo";
 import config from "@/config";
 
-// CHATGPT PROMPT TO GENERATE YOUR TERMS & SERVICES — replace with your own data 👇
-
-// 1. Go to https://chat.openai.com/
-// 2. Copy paste bellow
-// 3. Replace the data with your own (if needed)
-// 4. Paste the answer from ChatGPT directly in the <pre> tag below
-
-// You are an excellent lawyer.
-
-// I need your help to write a simple Terms & Services for my website. Here is some context:
-// - Website: https://shipfa.st
-// - Name: ShipFast
-// - Contact information: marc@shipfa.st
-// - Description: A JavaScript code boilerplate to help entrepreneurs launch their startups faster
-// - Ownership: when buying a package, users can download code to create apps. They own the code but they do not have the right to resell it. They can ask for a full refund within 7 day after the purchase.
-// - User data collected: name, email and payment information
-// - Non-personal data collection: web cookies
-// - Link to privacy-policy: https://shipfa.st/privacy-policy
-// - Governing Law: France
-// - Updates to the Terms: users will be updated by email
-
-// Please write a simple Terms & Services for my site. Add the current date. Do not add or explain your reasoning. Answer:
 
 export const metadata = getSEOTags({
   title: `Terms and Conditions | ${config.appName}`,
@@ -57,39 +35,40 @@ const TOS = () => {
           className="leading-relaxed whitespace-pre-wrap"
           style={{ fontFamily: "sans-serif" }}
         >
-          {`Last Updated: September 26, 2023
+          {`Last Updated: May 18, 2024
 
-Welcome to ShipFast!
+Welcome to ConvertPopup ("Service"), provided by ConvertPopup. By using the Service, you agree to be bound by the following terms and conditions (the "Terms of Service"). If you do not agree to these Terms of Service, please do not use the Service.
 
-These Terms of Service ("Terms") govern your use of the ShipFast website at https://shipfa.st ("Website") and the services provided by ShipFast. By using our Website and services, you agree to these Terms.
+Use of the Service
+The Service allows users to increase their conversion rate by showing recent transactions in a popup. Users are granted a license to use the Service for personal or commercial use, including integrating the Service into their own websites, provided that they comply with the terms and conditions of the Service.
 
-1. Description of ShipFast
+Subscription and Payment
+ConvertPopup operates on a subscription-based model. Users will provide their Stripe API key and add the widget to their website. Payment information, including name, email, and payment details, will be collected and securely stored.
 
-ShipFast is a platform that offers a JavaScript code boilerplate to assist entrepreneurs in launching their startups more efficiently.
+Data Collection
+ConvertPopup collects both personal and non-personal data. Personal data includes name, email, and payment information. Non-personal data includes web cookies.
 
-2. Ownership and Usage Rights
+Modification and Discontinuation of Service
+ConvertPopup reserves the right to modify or discontinue the Service, or any portion thereof, at any time without notice. ConvertPopup will not be liable to you or any third party for any modification, suspension, or discontinuation of the Service.
 
-When you purchase a package from ShipFast, you gain the right to download and use the code provided for creating applications. You own the code you create but do not have the right to resell it. We offer a full refund within 7 days of purchase, as specified in our refund policy.
+Limitation of Liability
+ConvertPopup will not be liable for any damages arising out of or in connection with your use of the Service, including but not limited to direct, indirect, incidental, special, consequential, or punitive damages, regardless of the form of action or the basis of the claim, even if ConvertPopup has been advised of the possibility of such damages. Some jurisdictions do not allow the exclusion or limitation of incidental or consequential damages, so this limitation and exclusion may not apply to you.
 
-3. User Data and Privacy
+Warranty Disclaimer
+The Service is provided "as is" and ConvertPopup makes no warranties, express or implied, including but not limited to implied warranties of merchantability and fitness for a particular purpose. ConvertPopup does not warrant that the Service will be uninterrupted or error-free, and will not be liable for any interruptions or errors. ConvertPopup does not endorse, warrant, or guarantee any third-party content or service that may be accessed through the Service.
 
-We collect and store user data, including name, email, and payment information, as necessary to provide our services. For details on how we handle your data, please refer to our Privacy Policy at https://shipfa.st/privacy-policy.
+Indemnification
+You agree to indemnify and hold ConvertPopup, its directors, officers, employees, agents, and assigns, harmless from any claims, losses, damages, liabilities, and expenses (including reasonable attorneys' fees) arising out of or in connection with your use of the Service, or any violation of these Terms of Service.
 
-4. Non-Personal Data Collection
+Governing Law
+These Terms of Service shall be governed by the laws of France without giving effect to any principles of conflicts of law. Any disputes arising out of or in connection with these Terms of Service will be resolved in the courts of France.
 
-We use web cookies to collect non-personal data for the purpose of improving our services and user experience.
+Updates to the Terms
+ConvertPopup may update these Terms of Service from time to time. Users will be notified of any changes by email.
 
-5. Governing Law
-
-These Terms are governed by the laws of France.
-
-6. Updates to the Terms
-
-We may update these Terms from time to time. Users will be notified of any changes via email.
-
-For any questions or concerns regarding these Terms of Service, please contact us at marc@shipfa.st.
-
-Thank you for using ShipFast!`}
+Contact Us
+For any questions or concerns regarding the Service or these Terms of Service, please contact us at mirzabiz2000@gmail.com.
+`}
         </pre>
       </div>
     </main>

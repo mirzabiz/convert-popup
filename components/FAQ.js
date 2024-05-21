@@ -7,22 +7,32 @@ import { useRef, useState } from "react";
 
 const faqList = [
   {
-    question: "What do I get exactly?",
-    answer: <div className="space-y-2 leading-relaxed">Loreum Ipseum</div>,
-  },
-  {
-    question: "Can I get a refund?",
+    question: "Can't I just code my own?",
     answer: (
-      <p>
-        Yes! You can request a refund within 7 days of your purchase. Reach out
-        by email.
-      </p>
+      <div className="space-y-2 leading-relaxed">
+        Absolutely! But will users trust you? Using a third-party service like ConvertPopup shows you're not faking data. When users click the popup, they're directed to a page that verifies the transaction. You don't just get a popup; you gain trust.
+      </div>
     ),
   },
   {
-    question: "I have another question",
+    question: "What is ConvertPopup?",
+    answer: <div className="space-y-2 leading-relaxed">
+ConvertPopup is a real-time sales popup that boosts your conversion rate by showcasing recent sales on your website, creating social proof, and driving more sales.      </div>,
+  },
+  {
+    question: "Do I need to code?",
     answer: (
-      <div className="space-y-2 leading-relaxed">Cool, contact us by email</div>
+      <div className="space-y-2 leading-relaxed">
+        {`You don't. All you need to do is copy and paste a small code snippet in your website's <head> tag. Wordpress, Shopify, Webflow, Bubble, Wix, etc. are all supported.`}
+      </div>
+    ),
+  },
+  {
+    question: "Does it work with Stripe?",
+    answer: (
+      <p>
+        Yes! You can use Stripe!
+      </p>
     ),
   },
 ];

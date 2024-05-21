@@ -3,21 +3,32 @@
 
 import { useState } from "react";
 import { Popover, Transition } from "@headlessui/react";
-import { useSession, signOut } from "next-auth/react";
 import apiClient from "@/libs/api";
+import { getAuth, signOut } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
+import config from "@/config";
 
 // A button to show user some account actions
 //  1. Billing: open a Stripe Customer Portal to manage their billing (cancel subscription, update payment method, etc.).
 //     You have to manually activate the Customer Portal in your Stripe Dashboard (https://dashboard.stripe.com/test/settings/billing/portal)
 //     This is only available if the customer has a customerId (they made a purchase previously)
 //  2. Logout: sign out and go back to homepage
-// See more at https://shipfa.st/docs/components/buttonAccount
-const ButtonAccount = () => {
-  const { data: session, status } = useSession();
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSignOut = () => {
-    signOut({ callbackUrl: "/" });
+const ButtonAccount = ({ user, hasAccess, customerId }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
+
+  const handleSignOut = async () => {
+    const auth = getAuth(); // Get the Firebase auth instance
+    try {
+      await signOut(auth); // Sign out the user
+      // Redirect to home page after successful sign out
+      router.push('/')
+    } catch (error) {
+      // Handle errors here, such as displaying a notification to the user
+      console.error('Sign out error:', error);
+    }
   };
   const handleBilling = async () => {
     setIsLoading(true);
@@ -25,6 +36,7 @@ const ButtonAccount = () => {
     try {
       const { url } = await apiClient.post("/stripe/create-portal", {
         returnUrl: window.location.href,
+        customerId,
       });
 
       window.location.href = url;
@@ -36,17 +48,17 @@ const ButtonAccount = () => {
   };
 
   // Don't show anything if not authenticated (we don't have any info about the user)
-  if (status === "unauthenticated") return null;
+  if (!user) return null;
 
   return (
     <Popover className="relative z-10">
       {({ open }) => (
         <>
-          <Popover.Button className="btn">
-            {session?.user?.image ? (
+          <Popover.Button className="btn focus:outline-none active:bg-transparent active:text-current">
+            {user.photoURL ? (
               <img
-                src={session?.user?.image}
-                alt={session?.user?.name || "Account"}
+                src={user.photoURL}
+                alt={user.displayName || "Account"}
                 className="w-6 h-6 rounded-full shrink-0"
                 referrerPolicy="no-referrer"
                 width={24}
@@ -54,12 +66,11 @@ const ButtonAccount = () => {
               />
             ) : (
               <span className="w-6 h-6 bg-base-300 flex justify-center items-center rounded-full shrink-0">
-                {session?.user?.name?.charAt(0) ||
-                  session?.user?.email?.charAt(0)}
+                {user.displayName?.charAt(0) || user.email?.charAt(0)}
               </span>
             )}
 
-            {session?.user?.name || "Account"}
+            {user.displayName || "Account"}
 
             {isLoading ? (
               <span className="loading loading-spinner loading-xs"></span>
@@ -68,9 +79,8 @@ const ButtonAccount = () => {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 20 20"
                 fill="currentColor"
-                className={`w-5 h-5 duration-200 opacity-50 ${
-                  open ? "transform rotate-180 " : ""
-                }`}
+                className={`w-5 h-5 duration-200 opacity-50 ${open ? "transform rotate-180 " : ""
+                  }`}
               >
                 <path
                   fillRule="evenodd"
@@ -91,7 +101,7 @@ const ButtonAccount = () => {
             <Popover.Panel className="absolute left-0 z-10 mt-3 w-screen max-w-[16rem] transform">
               <div className="overflow-hidden rounded-xl shadow-xl ring-1 ring-base-content ring-opacity-5 bg-base-100 p-1">
                 <div className="space-y-0.5 text-sm">
-                  <button
+                  {hasAccess && <button
                     className="flex items-center gap-2 hover:bg-base-300 duration-200 py-1.5 px-4 w-full rounded-lg font-medium"
                     onClick={handleBilling}
                   >
@@ -108,7 +118,22 @@ const ButtonAccount = () => {
                       />
                     </svg>
                     Billing
-                  </button>
+                  </button>}
+                  {hasAccess && <button
+                    className="flex items-center gap-2 hover:bg-base-300 duration-200 py-1.5 px-4 w-full rounded-lg font-medium"
+                    onClick={() => {
+                      window.open(
+                        `mailto:${config.mailgun.supportEmail}?subject=Need help with ${config.appName}`,
+                        "_blank"
+                      );
+                    }}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                      <path d="M20 4H4C2.897 4 2 4.897 2 6v12c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zM4 8l8 5 8-5v10H4V8zm8-2.041L4.511 6h14.978L12 5.959z" />
+                    </svg>
+
+                    Contact
+                  </button>}
                   <button
                     className="flex items-center gap-2 hover:bg-error/20 hover:text-error duration-200 py-1.5 px-4 w-full rounded-lg font-medium"
                     onClick={handleSignOut}

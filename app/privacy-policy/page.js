@@ -2,29 +2,6 @@ import Link from "next/link";
 import { getSEOTags } from "@/libs/seo";
 import config from "@/config";
 
-// CHATGPT PROMPT TO GENERATE YOUR PRIVACY POLICY — replace with your own data 👇
-
-// 1. Go to https://chat.openai.com/
-// 2. Copy paste bellow
-// 3. Replace the data with your own (if needed)
-// 4. Paste the answer from ChatGPT directly in the <pre> tag below
-
-// You are an excellent lawyer.
-
-// I need your help to write a simple privacy policy for my website. Here is some context:
-// - Website: https://shipfa.st
-// - Name: ShipFast
-// - Description: A JavaScript code boilerplate to help entrepreneurs launch their startups faster
-// - User data collected: name, email and payment information
-// - Non-personal data collection: web cookies
-// - Purpose of Data Collection: Order processing
-// - Data sharing: we do not share the data with any other parties
-// - Children's Privacy: we do not collect any data from children
-// - Updates to the Privacy Policy: users will be updated by email
-// - Contact information: marc@shipfa.st
-
-// Please write a simple privacy policy for my site. Add the current date.  Do not add or explain your reasoning. Answer:
-
 export const metadata = getSEOTags({
   title: `Privacy Policy | ${config.appName}`,
   canonicalUrlRelative: "/privacy-policy",
@@ -57,51 +34,74 @@ const PrivacyPolicy = () => {
           className="leading-relaxed whitespace-pre-wrap"
           style={{ fontFamily: "sans-serif" }}
         >
-          {`Last Updated: 2023-08-25
+          {`Last Updated: 2024-05-18
 
-Thank you for visiting ShipFast ("we," "us," or "our"). This Privacy Policy outlines how we collect, use, and protect your personal and non-personal information when you use our website located at https://shipfa.st (the "Website").
-
-By accessing or using the Website, you agree to the terms of this Privacy Policy. If you do not agree with the practices described in this policy, please do not use the Website.
+Welcome to ConvertPopup ("we", "our", "us"). We are committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website ConvertPopup.co and use our services. By using our website and services, you agree to the collection and use of information in accordance with this policy.
 
 1. Information We Collect
 
-1.1 Personal Data
+Personal Data:
+We collect personal information that you voluntarily provide to us when you register on the website, subscribe to our services, or contact us. This includes:
 
-We collect the following personal information from you:
+Name
+Email address
+Payment information
+Non-Personal Data:
+We also collect non-personal information automatically as you navigate through our site. This information may include:
 
-Name: We collect your name to personalize your experience and communicate with you effectively.
-Email: We collect your email address to send you important information regarding your orders, updates, and communication.
-Payment Information: We collect payment details to process your orders securely. However, we do not store your payment information on our servers. Payments are processed by trusted third-party payment processors.
+Web cookies
+IP address
+Browser type and version
+Operating system
+Referring URLs
+Page views and site navigation patterns
+2. How We Use Your Information
 
-1.2 Non-Personal Data
+We use the information we collect in the following ways:
 
-We may use web cookies and similar technologies to collect non-personal information such as your IP address, browser type, device information, and browsing patterns. This information helps us to enhance your browsing experience, analyze trends, and improve our services.
+To provide, operate, and maintain our website and services
+To improve, personalize, and expand our website and services
+To understand and analyze how you use our website and services
+To process your transactions and manage your subscriptions
+To communicate with you, either directly or through one of our partners, including for customer service, to provide you with updates and other information relating to the website, and for marketing and promotional purposes
+To send you emails
+To find and prevent fraud
+To comply with legal obligations
+3. Sharing Your Information
 
-2. Purpose of Data Collection
+We do not sell, trade, or otherwise transfer to outside parties your personal information, except in the following situations:
 
-We collect and use your personal data for the sole purpose of order processing. This includes processing your orders, sending order confirmations, providing customer support, and keeping you updated about the status of your orders.
+With service providers who assist us in operating our website and services, conducting our business, or serving our users, so long as those parties agree to keep this information confidential
+To comply with legal obligations, such as responding to subpoenas, court orders, or other legal processes
+To protect and defend our rights or property, and to investigate and prevent any wrongdoing in connection with our services
+In connection with a merger, acquisition, or sale of all or a portion of our assets
+4. Cookies and Tracking Technologies
 
-3. Data Sharing
+We use cookies and similar tracking technologies to track the activity on our website and store certain information. Cookies are files with a small amount of data which may include an anonymous unique identifier. You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent. However, if you do not accept cookies, you may not be able to use some portions of our website.
 
-We do not share your personal data with any third parties except as required for order processing (e.g., sharing your information with payment processors). We do not sell, trade, or rent your personal information to others.
+5. Data Security
 
-4. Children's Privacy
+We implement a variety of security measures to maintain the safety of your personal information when you enter, submit, or access your personal information. However, no method of transmission over the Internet, or method of electronic storage, is 100% secure, and we cannot guarantee its absolute security.
 
-ShipFast is not intended for children under the age of 13. We do not knowingly collect personal information from children. If you are a parent or guardian and believe that your child has provided us with personal information, please contact us at the email address provided below.
+6. Third-Party Links
 
-5. Updates to the Privacy Policy
+Our website may contain links to other sites that are not operated by us. If you click on a third-party link, you will be directed to that third party's site. We strongly advise you to review the Privacy Policy of every site you visit. We have no control over and assume no responsibility for the content, privacy policies, or practices of any third-party sites or services.
 
-We may update this Privacy Policy from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. Any updates will be posted on this page, and we may notify you via email about significant changes.
+7. Children's Privacy
 
-6. Contact Information
+Our website and services are not intended for anyone under the age of 13. We do not knowingly collect personally identifiable information from children under 13. If you are a parent or guardian and you are aware that your child has provided us with personal information, please contact us. If we discover that a child under 13 has provided us with personal information, we will delete such information from our servers immediately.
 
-If you have any questions, concerns, or requests related to this Privacy Policy, you can contact us at:
+8. Changes to This Privacy Policy
 
-Email: marc@shipfa.st
+We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Effective Date" at the top. You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page.
 
-For all other inquiries, please visit our Contact Us page on the Website.
+9. Contact Us
 
-By using ShipFast, you consent to the terms of this Privacy Policy.`}
+If you have any questions about this Privacy Policy, please contact us at:
+
+Email: mirzabiz2000@gmail.com
+
+By using ConvertPopup, you consent to the terms of this Privacy Policy.`}
         </pre>
       </div>
     </main>

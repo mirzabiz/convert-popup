@@ -5,20 +5,20 @@ import ButtonCheckout from "./ButtonCheckout";
 // It's your Stripe config in config.js.stripe.plans[] that will be used to display the plans
 // <ButtonCheckout /> renders a button that will redirect the user to Stripe checkout called the /api/stripe/create-checkout API endpoint with the correct priceId
 
-const Pricing = () => {
+const Pricing = ({ user, dialog, hasAccess }) => {
   return (
-    <section className="bg-[#f7f8fd]  overflow-hidden" id="pricing">
-    <div className="py-24 px-8 max-w-5xl mx-auto">
-      <div className="flex flex-col text-center w-full mb-20">
-        <p className="font-medium  mb-8 text-[#02ad78]">Pricing</p>
-        <h2 className="font-bold text-3xl text-[#111] lg:text-5xl tracking-tight">
-          Boost your Conversion Rate Today
-        </h2>
-      </div>
+    <section className="bg-[#e9f5f0]  overflow-hidden" id="pricing">
+      <div className={`${dialog ? 'py-6 pb-12' : 'py-24'} px-8 max-w-5xl mx-auto`}>
+        <div className="flex flex-col text-center w-full mb-20">
+          <p className="font-medium  mb-8 text-[#02ad78]">Pricing</p>
+          <h2 className="font-bold text-3xl text-slate-800 lg:text-5xl tracking-tight">
+            Boost your Conversion Rate Today
+          </h2>
+        </div>
 
         <div className="relative flex justify-center flex-col lg:flex-row items-center lg:items-stretch gap-8">
           {config.stripe.plans.map((plan) => (
-            <div key={plan.priceId} className="relative w-full max-w-lg">
+            <div key={plan.priceId} className="relative w-full max-w-lg shadow-md rounded-lg">
               {plan.isFeatured && (
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
                   <span
@@ -62,7 +62,7 @@ const Pricing = () => {
                   </p>
                   <div className="flex flex-col justify-end mb-[4px]">
                     <p className="text-xs text-base-content/60 uppercase font-semibold">
-                      USD
+                      /year
                     </p>
                   </div>
                 </div>
@@ -88,11 +88,13 @@ const Pricing = () => {
                     ))}
                   </ul>
                 )}
-                <div className="space-y-2">
-                  <ButtonCheckout priceId={plan.priceId} />
-
-                  <p className="flex items-center justify-center gap-2 text-sm text-center text-base-content/80 font-medium relative">
-                    Pay once. Access forever.
+                <div className="space-y-2 pb-4">
+                  <ButtonCheckout priceId={plan.priceId} user={user} hasAccess={hasAccess}/> 
+                  <p className="flex items-center justify-center gap-1 pt-1 text-xs text-gray-500 text-center text-base-content/80 font-medium relative">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" className="icon text-green-500" width="1em" height="1em" viewBox="0 0 16 16" data-v-e8d572f6>
+                      <path fill="currentColor" fillRule="evenodd" d="M8 1a3.5 3.5 0 0 0-3.5 3.5V7A1.5 1.5 0 0 0 3 8.5v5A1.5 1.5 0 0 0 4.5 15h7a1.5 1.5 0 0 0 1.5-1.5v-5A1.5 1.5 0 0 0 11.5 7V4.5A3.5 3.5 0 0 0 8 1m2 6V4.5a2 2 0 1 0-4 0V7z" clipRule="evenodd"></path>
+                    </svg>
+                    Secure payment with Stripe
                   </p>
                 </div>
               </div>

@@ -14,8 +14,8 @@ const NotificationUI = ({ backgroundColor, accentColor, borderColor, textColor, 
   const currentPositionClass = positionClasses[popupPosition] || positionClasses['bottom-right'];
 
   return (
-    <div className={`fixed ${currentPositionClass}`}>
-      <div className="flex items-center justify-between border rounded-lg p-4 shadow-sm bg-white w-[270px] h-[75px] z-20 "
+    <div className={`fixed ${currentPositionClass} z-20`}>
+      <div className="flex items-center justify-between border rounded-lg p-4 shadow-sm bg-white w-[270px] h-[75px]"
         style={{ backgroundColor: backgroundColor, borderColor: borderColor }}>
         <div className="flex flex-col">
           <span className="text-sm" style={{ color: accentColor }}>Someone in <span className='font-semibold'>USA</span> {actionText}</span>

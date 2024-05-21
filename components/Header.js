@@ -4,9 +4,13 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import ButtonSignin from "./ButtonSignin";
 import logo from "@/app/icon.png";
 import config from "@/config";
+import ButtonAccount from "./ButtonAccount";
+import LoginDialog from "./LoginDialog";
+import ButtonGradient from "./ButtonGradient";
+import { useRouter, usePathname } from 'next/navigation';
+import Script from 'next/script';
 
 const links = [
   {
@@ -20,25 +24,44 @@ const links = [
 ];
 
 
-const cta = <ButtonSignin extraStyle="bg-[#02ad78] text-white" text="Login" />;
+
 
 // A header with a logo on the left, links in the center (like Pricing, etc...), and a CTA (like Get Started or Login) on the right.
 // The header is responsive, and on mobile, the links are hidden behind a burger button.
-const Header = ({ home }) => {
+const Header = ({ home, user, hasAccess, openPricingDialog, landing, customerId }) => {
+  const pathname = usePathname();
+  const router = useRouter();
+
   const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
+  const [loginDialog, setLoginDialog] = useState(false)
+
+  const handleLinkClick = (e, href) => {
+    e.preventDefault();
+    // router.push('/home')
+    window.location.assign(href)
+  };
+
 
   // setIsOpen(false) when the route changes (i.e: when the user clicks on a link on mobile)
+  const cta = user ? <div className='bg-[#02ad78] px-5 py-1 rounded-md text-white hover:bg-[#02ad77e9] hover:text-white cursor-pointer'>
+    <div onClick={(e) => handleLinkClick(e, '/home')}> Your Projects </div>
+  </div> : <div onClick={() => setLoginDialog(true)}
+    className='border-[#02ad78] border-[1px] px-5 py-1 rounded-md text-[#02ad78] hover:bg-[#02ad78] hover:text-white cursor-pointer'>
+    Login
+  </div>;
   useEffect(() => {
     setIsOpen(false);
   }, [searchParams]);
 
   return (
-    <header className="">
+    <header className={`${landing && 'bg-[#e9f5f0]'}`}>
       <nav
         className="container flex items-center justify-between px-8 py-4 mx-auto"
         aria-label="Global"
       >
+        <LoginDialog isOpen={loginDialog}
+          onClose={() => setLoginDialog(false)} />
         {/* Your logo/name on large screens */}
         <div className="flex lg:flex-1">
           <Link
@@ -99,10 +122,12 @@ const Header = ({ home }) => {
 
         {/* CTA on large screens */}
         {!home ? <div className="hidden lg:flex lg:justify-end lg:flex-1">{cta}</div>
-          : <>
-            <Link href="/home" className="hidden lg:flex lg:justify-end lg:mr-8 cursor-pointer hover:underline">Projects</Link>
-            <div className="hidden lg:flex lg:justify-end lg:mr-8 cursor-pointer hover:underline">Settings</div>
-          </>}
+          : <div className="hidden lg:flex lg:justify-end lg:flex-1">
+            {hasAccess ? <Link href="/home" className="hidden lg:flex lg:justify-end lg:mr-8 cursor-pointer items-center hover:underline">Projects</Link>
+              : <ButtonGradient styles="mr-4" title="Upgrade" onClick={openPricingDialog} />}
+            {/* <div className="hidden lg:flex lg:justify-end lg:mr-8 cursor-pointer hover:underline">Settings</div> */}
+            <ButtonAccount user={user} hasAccess={hasAccess} customerId={customerId}/>
+          </div>}
       </nav>
 
       {/* Mobile menu, show/hide based on menu state. */}
@@ -173,7 +198,8 @@ const Header = ({ home }) => {
           </div> : <div className="flow-root mt-6">
             <div className="py-4">
               <Link href={"/home"} className="flex flex-col gap-y-4 items-start cursor-pointer hover:underline">Projects</Link>
-              <div className="flex flex-col gap-y-4 mt-4 items-start cursor-pointer hover:underline">Settings</div>
+              <ButtonAccount user={user} hasAccess={hasAccess} customerId={customerId}/>
+              {/* <div className="flex flex-col gap-y-4 mt-4 items-start cursor-pointer hover:underline">Settings</div> */}
             </div>
             <div className="divider"></div>
           </div>}

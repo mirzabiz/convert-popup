@@ -7,32 +7,22 @@ export const createCheckout = async ({
   successUrl,
   cancelUrl,
   couponId,
-  clientReferenceId,
+  uid,
   user,
 }) => {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
   const extraParams = {};
 
-  if (user?.customerId) {
-    extraParams.customer = user.customerId;
-  } else {
-    if (mode === "payment") {
-      extraParams.customer_creation = "always";
-      // The option below costs 0.4% (up to $2) per invoice. Alternatively, you can use https://zenvoice.io/ to create unlimited invoices automatically.
-      // extraParams.invoice_creation = { enabled: true };
-      extraParams.payment_intent_data = { setup_future_usage: "on_session" };
-    }
     if (user?.email) {
       extraParams.customer_email = user.email;
     }
-    extraParams.tax_id_collection = { enabled: true };
-  }
+  
 
   const stripeSession = await stripe.checkout.sessions.create({
-    mode,
-    allow_promotion_codes: true,
-    client_reference_id: clientReferenceId,
+    mode: 'subscription',
+    // allow_promotion_codes: true,
+    client_reference_id: uid,
     line_items: [
       {
         price: priceId,
@@ -48,6 +38,9 @@ export const createCheckout = async ({
       : [],
     success_url: successUrl,
     cancel_url: cancelUrl,
+    metadata: {
+      uid,
+    },
     ...extraParams,
   });
 
@@ -77,7 +70,7 @@ export const findCheckoutSession = async (sessionId) => {
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
     const session = await stripe.checkout.sessions.retrieve(sessionId, {
-      expand: ["line_items"],
+      expand: ["line_items", "subscription"],
     });
 
     return session;

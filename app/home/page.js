@@ -3,23 +3,37 @@
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import { db } from "@/libs/firebaseConfig";
-import { collection, addDoc, getDocs, query, setDoc, doc } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, setDoc, doc, where, getDoc } from "firebase/firestore";
 import { Dialog } from '@headlessui/react';
 import { Toaster, toast } from "react-hot-toast";
 import Link from "next/link";
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { Suspense } from 'react'
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import Pricing from "@/components/Pricing";
+import BetterIcon from "@/components/BetterIcon";
+import { ClipLoader } from "react-spinners";
+import Head from "next/head";
+import apiClient from "@/libs/api";
+
 
 const Home = () => {
 
   const router = useRouter();
+  const pathname = usePathname()
 
   const [projects, setProjects] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [pricingDialog, setPricingDialog] = useState(false);
+  const [hasAccess, setHasAccess] = useState(false);
   const [newProject, setNewProject] = useState({ name: '', url: '' });
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [customerId, setCustomerId] = useState(null);
+  const [planName, setPlanName] = useState(null);
 
-  const openDialog = () => setIsDialogOpen(true);
   const closeDialog = () => setIsDialogOpen(false);
+  const openPricingDialog = () => setPricingDialog(true)
 
   function transformUrlForId(url) {
     // Remove protocol, www, and trailing slashes
@@ -29,6 +43,30 @@ const Home = () => {
     // Encode the string to ensure it is a safe Firestore document ID
     return encodeURIComponent(cleanUrl);
   }
+  const checkUserAccess = async (currUser) => {
+    if (!currUser) {
+      setHasAccess(false);
+      return;
+    }
+
+    const userDocRef = doc(db, "users", currUser.uid);
+    setLoading(true)
+    try {
+      const docSnap = await getDoc(userDocRef);
+      if (docSnap.exists() && docSnap.data().hasAccess) {
+        setHasAccess(true);
+        setPlanName(docSnap.data().planName);
+      } else {
+        setHasAccess(false);
+        setPricingDialog(true)
+      }
+    } catch (error) {
+      console.error('Error checking access:', error);
+      setHasAccess(false);
+    } finally {
+      setLoading(false)
+    }
+  };
 
   const handleCreateProject = async () => {
     if (!newProject.url || !newProject.name) {
@@ -36,12 +74,28 @@ const Home = () => {
     }
     const url = transformUrlForId(newProject.url);
 
+    if (planName === 'Starter' && projects.length >= 1) {
+      toast.error('Upgrade your plan to add more projects. Redirecting to the billing portal...');
+      // Redirect to customer portal for upgrading the plan
+      try {
+        const { url } = await apiClient.post("/stripe/create-portal", {
+          returnUrl: window.location.href,
+          customerId,
+        });
+  
+        window.location.href = url;
+      } catch (error) {
+        console.error("Error creating portal session: ", error);
+        toast.error('Failed to redirect to the billing portal.');
+      }
+      return;
+    }
     try {
       // Add a new document in collection "projects"
       const docRef = await addDoc(collection(db, "projects"), {
         name: newProject.name,
         url,
-        uid: '',
+        uid: user.uid,
         stripeRestrictedApiKey: '',
         backgroundColor: '#FFFFFF',
         accentColor: '#02ad78',
@@ -49,6 +103,7 @@ const Home = () => {
         textColor: '#374151',
         popupPosition: 'bottom-left',
         status: 'Incomplete',
+        actionText: 'ordered',
         createdAt: new Date()  // Store the creation date
       });
       await setDoc(doc(db, "websites", url), {
@@ -68,47 +123,73 @@ const Home = () => {
     setNewProject(prev => ({ ...prev, [name]: value }));
   };
 
-  useEffect(() => {
-    let isActive = true; // flag to check if the component is still mounted
-
-    async function fetchProjects() {
-      try {
-        const querySnapshot = await getDocs(query(collection(db, "projects")));
-        const projectsArray = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        if (isActive) {
-          setProjects(projectsArray);
-          console.log('Projects fetched:', projectsArray);
-        }
-      } catch (error) {
-        if (isActive) {
-          console.error('Error fetching projects:', error);
-        }
-      }
+  async function fetchProjects(currUser) {
+    try {
+      console.log('users', currUser)
+      const q = query(collection(db, "projects"), where("uid", "==", currUser.uid));
+      const querySnapshot = await getDocs(q);
+      const projectsArray = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setProjects(projectsArray);
+      console.log('Projects fetched:', projectsArray);
+    } catch (error) {
+      console.error('Error fetching projects:', error);
     }
+  }
 
-    fetchProjects().then(() => {
-      if (isActive) {
-        console.log('Projects fetch attempt completed');
-      }
-    }).catch(error => {
-      if (isActive) {
-        console.error('Error after fetching projects:', error);
+
+
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        console.log('User is signed in', user);
+        setUser(user);
+        await fetchProjects(user)
+        await checkUserAccess(user)
+
+        const uid = user.uid;
+        const userDoc = doc(db, 'users', uid);
+        const userSnapshot = await getDoc(userDoc);
+        if (userSnapshot.exists()) {
+          const userData = userSnapshot.data();
+          setCustomerId(userData.customerId);
+        } else {
+          console.log('No such document!');
+        }
+      } else {
+        // User is signed out 
+        console.log('User is signed out');
+        toast.error('You are not loggedin')
+        router.push('/')
+        setUser(null);
       }
     });
 
-    return () => {
-      isActive = false; // Ensure the flag is updated when the component unmounts
-    };
+    // Clean up the subscription on unmount
+    return () => unsubscribe();
   }, []);
 
-  // List display in the Home component
+  useEffect(() => {
+    const scriptId = "popup-script";
+    const script = document.getElementById(scriptId);
+    if (script) {
+      script.remove();
+    }
+  }, [pathname]);
+
+  if (loading) {
+    return <div className="flex justify-center items-center min-h-screen">
+      <ClipLoader color="#111" size={50} />
+    </div>;
+  }
+
   return (
     <Suspense>
       <section className="">
-        <Header home />
+        <Header home user={user} hasAccess={hasAccess} openPricingDialog={openPricingDialog} customerId={customerId} />
         <Toaster
           toastOptions={{
             duration: 3000,
@@ -117,7 +198,29 @@ const Home = () => {
         <div className="bg-gray-100 min-h-screen ">
           <div className="container mx-auto p-4">
 
-            <button onClick={openDialog} className="w-full border-[#02ad78] border-[1px] text-[#02ad78] p-3 rounded hover:bg-[#02ad78] hover:text-white my-6 mb-8">
+            <button onClick={async () => {
+                if (!hasAccess) {
+                  setPricingDialog(true);
+                  return;
+                }
+                if (planName === 'Starter' && projects.length >= 1) {
+                  toast.error('Upgrade your plan to add more projects. Redirecting to the billing portal...');
+                  // Redirect to customer portal for upgrading the plan
+                  try {
+                    const { url } = await apiClient.post("/stripe/create-portal", {
+                      returnUrl: window.location.href,
+                      customerId,
+                    });
+              
+                    window.location.href = url;
+                  } catch (error) {
+                    console.error("Error creating portal session: ", error);
+                    toast.error('Failed to redirect to the billing portal.');
+                  }
+                  return;
+                }
+                setIsDialogOpen(true);
+            }} className="w-full border-[#02ad78] border-[1px] text-[#02ad78] p-3 rounded hover:bg-[#02ad78] hover:text-white my-6 mb-8">
               Create a new project
             </button>
             <div className="space-y-4">
@@ -165,6 +268,25 @@ const Home = () => {
             )}
           </div>
         </div>
+        {pricingDialog && (
+          <Dialog open={pricingDialog} onClose={() => setPricingDialog(false)} className="fixed inset-0 z-[20] bg-black bg-opacity-60 overflow-y-auto">
+            <div className="flex items-center justify-center min-h-screen ">
+              <Dialog.Panel className="bg-[#e9f5f0] rounded shadow">
+                <Dialog.Title>
+                  <BetterIcon onClick={() => setPricingDialog(false)}>
+                    <div className="text-slate-500">X</div>
+                  </BetterIcon>
+                </Dialog.Title>
+                <Dialog.Description className="flex items-center justify-center px-[32px]">
+
+                  <Pricing user={user} dialog={true} />
+                </Dialog.Description>
+                {/* Subscription handling elements go here */}
+              </Dialog.Panel>
+            </div>
+          </Dialog>
+
+        )}
       </section>
     </Suspense>
   );

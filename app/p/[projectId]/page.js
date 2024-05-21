@@ -8,9 +8,14 @@ import DeleteProjectDialog from "@/components/DeleteProjectDialog";
 import { useParams } from 'next/navigation';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '@/libs/firebaseConfig';
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useRouter } from 'next/navigation';
+import Stripe from "stripe";
+import { ClipLoader } from "react-spinners";
 
 const ProjectDetails = () => {
+  const router = useRouter();
   const params = useParams();
   const projectId = params.projectId;
 
@@ -68,19 +73,26 @@ const ProjectDetails = () => {
       alert('Please enter your Stripe restricted API key.');
       return;
     }
+    const stripe = new Stripe(apiKey)
+
     try {
+      await stripe.balance.retrieve();
       const projectRef = doc(db, 'projects', projectId);
       await setDoc(projectRef, {
         stripeRestrictedApiKey: apiKey,
         status: 'Active'
-      }, { merge:  true});
+      }, { merge: true });
       setActiveStatus('Active');
       setIsEditing(false);
       setIsKeyVisible(false);
       toast.success('API key saved successfully!')
     } catch (error) {
-      console.error('Error saving API key:', error);
-      toast.error('Failed to save API key.')
+      if (error.type === 'StripeAuthenticationError') {
+        toast.error('Invalid Stripe Restricted API Key. Please make sure the key is valid.');
+      } else {
+        toast.error('Failed to save API key.');
+      }
+      console.log(error)
     }
   };
 
@@ -89,17 +101,15 @@ const ProjectDetails = () => {
     setIsKeyVisible(true); // Make key visible when editing
   };
 
-  
- 
-  useEffect(() => {
-    let isActive = true;
-    async function fetchProject() {
-      if (projectId) {
-        try {
-          const docRef = doc(db, 'projects', projectId);
-          const docSnap = await getDoc(docRef);
-          if (docSnap.exists() && isActive) {
-            const projectData = docSnap.data();
+  async function fetchProjects(user, projectId) {
+    if (projectId) {
+      setLoading(true);
+      try {
+        const docRef = doc(db, 'projects', projectId);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const projectData = docSnap.data();
+          if (projectData.uid === user.uid) {
             setProject(projectData);
             setPopupPosition(projectData.popupPosition);
             setActionText(projectData.actionText || 'ordered');
@@ -110,33 +120,40 @@ const ProjectDetails = () => {
             setTextColor(projectData.textColor || '#374151');
             setAccentColor(projectData.accentColor || '#02ad78');
             setBorderColor(projectData.borderColor || '#E0E0E0');
-            console.log('Project data:', projectData);
           } else {
-            console.log('No such project!');
+            console.log('Project does not belong to user');
+            toast.error('You do not have permission to view this project');
+            router.push('/')
           }
-        } catch (error) {
-          if (isActive) {
-            console.error('Error fetching project:', error);
-          }
-        } finally {
-          if (isActive) {
-            setLoading(false);
-          }
+          // console.log('Project data:', projectData);
+        } else {
+          console.log('No such project!');
         }
+      } catch (error) {
+        console.error('Error fetching project:', error);
+
+      } finally {
+        setLoading(false);
       }
     }
+  }
 
-    fetchProject().then(() => {
-      console.log('Projects fetch attempt completed');
-    }).catch(error => {
-      console.error('Error after fetching projects:', error);
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        console.log('User is signed in', user, projectId);
+        await fetchProjects(user, projectId);
+      } else {
+        // User is signed out
+        console.log('User is signed out');
+        toast.error('You are not logged in');
+        router.push('/');
+      }
     });
-
-    return () => {
-      isActive = false; // Update the flag when the component unmounts
-    };
+    return () => unsubscribe();
   }, [projectId]);
-  // Close all pickers if clicked outside
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (!bgRef.current.contains(event.target)) setShowPicker((prev) => ({ ...prev, bg: false }));
@@ -179,12 +196,12 @@ const ProjectDetails = () => {
   };
   const savePreferences = async () => {
     const projectRef = doc(db, "projects", projectId); // Reference to the Firestore document
-  
+
     const preferences = {
       popupPosition,
       actionText
     };
-  
+
     try {
       // Using setDoc with { merge: true } to update only the specified fields
       await setDoc(projectRef, preferences, { merge: true });
@@ -196,16 +213,23 @@ const ProjectDetails = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="flex justify-center items-center min-h-screen">
+      <ClipLoader color="#111" size={50} />
+    </div>;
   }
 
   if (!project) {
-    return <div>No project found.</div>;
+    return <div className="flex justify-center items-center min-h-screen">No project found :(</div>;
   }
   return (
     <section className="">
-      <Header home />
+      <Header home hasAccess />
       <div className="bg-gray-100 min-h-screen ">
+        <Toaster
+            toastOptions={{
+              duration: 3000,
+            }}
+          />
         <NotificationUI
           backgroundColor={backgroundColor}
           accentColor={accentColor}
@@ -229,14 +253,19 @@ const ProjectDetails = () => {
               <label className="block text-sm font-bold mb-2">
                 Add this script
               </label>
-              <div className="md:flex items-center justify-center mb-2 ">
-                <div className="bg-gray-200 rounded p-2 flex-grow md:mb-0 mb-2 md:max-w-[600px] lg:max-w-[660px]">
-                  <code className="text-sm block overflow-x-auto text-nowrap">&lt;script src="http://localhost:3000/api/script?projectId={projectId}"&gt;&lt;/script&gt;</code>
+              <div className={apiKey ? "" : "blur-sm"}>
+                <div className="md:flex items-center justify-center mb-2">
+                  <div className="bg-gray-200 rounded p-2 flex-grow md:mb-0 mb-2 md:max-w-[600px] lg:max-w-[660px]">
+                    <code className="text-sm block overflow-x-auto text-nowrap">&lt;script src="http://localhost:3000/api/script?projectId={projectId}"&gt;&lt;/script&gt;</code>
+                  </div>
+                  <button onClick={apiKey ? handleCopy : null} className="text-white md:ml-2 md:mt-0 mt-2 text-sm bg-[#02ad78] hover:bg-green-500 font-bold py-2 px-4 rounded md:w-auto ">
+                    Copy
+                  </button>
                 </div>
-                <button onClick={handleCopy} className="text-white md:ml-2 md:mt-0 mt-2 text-sm bg-[#02ad78] hover:bg-green-500 font-bold py-2 px-4 rounded md:w-auto ">
-                  Copy
-                </button>
               </div>
+              {!apiKey && (
+                <p className="text-red-500 text-sm">Please add your Stripe API key in the Integrations section before proceeding.</p>
+              )}
             </div>
 
             <div className="bg-white rounded-lg shadow-lg p-6">
@@ -255,7 +284,7 @@ const ProjectDetails = () => {
                 />
               </div>
               <p className="text-gray-600 text-sm mb-6">
-                Create a <a href="https://dashboard.stripe.com/apikeys/create" target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-800">Stripe restricted API key</a> with only "Charges" set on "Read".
+                Create a <a href="https://dashboard.stripe.com/apikeys/create?name=ConvertPopup&permissions%5B%5D=rak_charge_read&permissions%5B%5D=rak_balance_read" target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-800">Stripe restricted API key</a>. ⚠️ DO NOT change any permissions.
               </p>
               <div className="flex items-center space-x-4">
                 {isEditing ? (
@@ -291,6 +320,7 @@ const ProjectDetails = () => {
                 )}
               </div>
             </div>
+
             {/* Theme Section */}
             <div className="relative bg-white rounded-lg shadow-lg p-6 mt-6">
               <h2 className="text-lg font-semibold mb-4 text-gray-400">Theme</h2>
@@ -302,7 +332,7 @@ const ProjectDetails = () => {
                 </label>
                 <div className="h-10 w-full rounded mb-2 cursor-pointer border-[1px]" style={{ backgroundColor }} onClick={() => togglePicker('bg')}></div>
                 {showPicker.bg && (
-                  <div className="absolute z-10">
+                  <div className="absolute">
                     <ChromePicker
                       disableAlpha={true}
                       color={backgroundColor}
@@ -319,7 +349,7 @@ const ProjectDetails = () => {
                 </label>
                 <div className="h-10 w-full rounded mb-2 cursor-pointer border-[1px]" style={{ backgroundColor: textColor }} onClick={() => togglePicker('text')}></div>
                 {showPicker.text && (
-                  <div className="absolute z-10">
+                  <div className="absolute">
                     <ChromePicker
                       disableAlpha={true}
                       color={textColor}
@@ -336,7 +366,7 @@ const ProjectDetails = () => {
                 </label>
                 <div className="h-10 w-full rounded mb-2 cursor-pointer border-[1px]" style={{ backgroundColor: accentColor }} onClick={() => togglePicker('accent')}></div>
                 {showPicker.accent && (
-                  <div className="absolute z-10">
+                  <div className="absolute">
                     <ChromePicker
                       disableAlpha={true}
                       color={accentColor}
@@ -353,7 +383,7 @@ const ProjectDetails = () => {
                 </label>
                 <div className="h-10 w-full rounded mb-2 cursor-pointer border-[1px]" style={{ backgroundColor: borderColor }} onClick={() => togglePicker('border')}></div>
                 {showPicker.border && (
-                  <div className="absolute z-10">
+                  <div className="absolute">
                     <ChromePicker
                       disableAlpha={true}
                       color={borderColor}
@@ -416,8 +446,8 @@ const ProjectDetails = () => {
               </div>
             </div>
             <div
-            onClick={() => setIsDialogOpen(true)}
-            className="border-[1px] border-red-400 text-center text-red-400 p-2 rounded-md cursor-pointer hover:bg-gray-200">
+              onClick={() => setIsDialogOpen(true)}
+              className="border-[1px] border-red-400 text-center text-red-400 p-2 rounded-md cursor-pointer hover:bg-gray-200">
               Delete project
             </div>
 
