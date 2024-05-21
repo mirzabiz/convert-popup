@@ -86,7 +86,7 @@ export async function GET(req) {
     const response = new NextResponse(minifiedResult.code, {
       headers: {
         'Content-Type': 'application/javascript',
-        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=59'
+        // 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=59'
       }
     });
 
