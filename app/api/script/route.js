@@ -82,9 +82,9 @@ export async function GET(req) {
         semicolons: false, 
       },
     });
-    const currentTime = new Date();
-    const updatedAt = configDic.updatedAt ? new Date(configDic.updatedAt.toMillis()) : null;
-    const timeDifference = updatedAt ? (currentTime - updatedAt) / (1000 * 60) : null; // Time difference in minutes
+    // const currentTime = new Date();
+    // const updatedAt = configDic.updatedAt ? new Date(configDic.updatedAt.toMillis()) : null;
+    // const timeDifference = updatedAt ? (currentTime - updatedAt) / (1000 * 60) : null; // Time difference in minutes
 
     const headers = {
       'Content-Type': 'application/javascript'

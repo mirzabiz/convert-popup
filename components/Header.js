@@ -9,6 +9,7 @@ import config from "@/config";
 import ButtonAccount from "./ButtonAccount";
 import LoginDialog from "./LoginDialog";
 import ButtonGradient from "./ButtonGradient";
+import AppsumoDialog from "./AppsumoDialog";
 
 const links = [
   {
@@ -31,6 +32,7 @@ const Header = ({ home, user, hasAccess, openPricingDialog, landing, customerId 
   const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
   const [loginDialog, setLoginDialog] = useState(false)
+  const [appsumoDialog, setAppsumoDialog] = useState(false);
 
   const handleLinkClick = (e, href) => {
     e.preventDefault();
@@ -58,6 +60,8 @@ const Header = ({ home, user, hasAccess, openPricingDialog, landing, customerId 
       >
         <LoginDialog isOpen={loginDialog}
           onClose={() => setLoginDialog(false)} />
+        <AppsumoDialog isOpen={appsumoDialog} onClose={() => setAppsumoDialog(false)} />
+
         {/* Your logo/name on large screens */}
         <div className="flex lg:flex-1">
           <Link
@@ -119,10 +123,11 @@ const Header = ({ home, user, hasAccess, openPricingDialog, landing, customerId 
         {/* CTA on large screens */}
         {!home ? <div className="hidden lg:flex lg:justify-end lg:flex-1">{cta}</div>
           : <div className="hidden lg:flex lg:justify-end lg:flex-1">
+            {!hasAccess && <div onClick={() => setAppsumoDialog(true)} className="hidden lg:flex lg:justify-end lg:mr-8 cursor-pointer items-center hover:underline">Appsumo code</div>}
             {hasAccess ? <Link href="/home" className="hidden lg:flex lg:justify-end lg:mr-8 cursor-pointer items-center hover:underline">Projects</Link>
               : <ButtonGradient styles="mr-4" title="Upgrade" onClick={openPricingDialog} />}
             {/* <div className="hidden lg:flex lg:justify-end lg:mr-8 cursor-pointer hover:underline">Settings</div> */}
-            <ButtonAccount user={user} hasAccess={hasAccess} customerId={customerId}/>
+            <ButtonAccount user={user} hasAccess={hasAccess} customerId={customerId} />
           </div>}
       </nav>
 
@@ -193,8 +198,9 @@ const Header = ({ home, user, hasAccess, openPricingDialog, landing, customerId 
             <div className="flex flex-col">{cta}</div>
           </div> : <div className="flow-root mt-6">
             <div className="py-4">
-              <Link href={"/home"} className="flex flex-col gap-y-4 items-start cursor-pointer hover:underline">Projects</Link>
-              <ButtonAccount user={user} hasAccess={hasAccess} customerId={customerId}/>
+              {!hasAccess && <div onClick={() => setAppsumoDialog(true)} className="flex flex-col gap-y-4 items-start cursor-pointer hover:underline pt-4">Appsumo code</div>}
+              <Link href={"/home"} className="flex flex-col gap-y-4 items-start cursor-pointer hover:underline py-4">Projects</Link>
+              <ButtonAccount user={user} hasAccess={hasAccess} customerId={customerId} />
               {/* <div className="flex flex-col gap-y-4 mt-4 items-start cursor-pointer hover:underline">Settings</div> */}
             </div>
             <div className="divider"></div>
